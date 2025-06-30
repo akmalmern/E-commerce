@@ -25,7 +25,12 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Paro'lingizni kiritishingiz kerak!"],
+      required: [
+        function () {
+          return this.isNew;
+        },
+        "Paro'lingizni kiritishingiz kerak!",
+      ],
       match: [
         /^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]+$/,
         "Parolda kamida 1 ta katta harf, 1 ta kichik harf, 1 ta raqam va maxsus belgi boʻlishi kerak.",
@@ -37,6 +42,24 @@ const userSchema = mongoose.Schema(
     isAdmin: {
       type: Boolean,
       dafault: false,
+    },
+    resetPasswordToken: {
+      type: String,
+      sparse: true, // Faqat mavjud bo‘lganda indekslanadi
+      default: null,
+    },
+    resetPasswordExpire: {
+      type: Date,
+      default: null,
+    },
+    deleteAccountToken: {
+      type: String,
+      sparse: true,
+      default: null,
+    },
+    deleteAccountTokenExpire: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }
