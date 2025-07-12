@@ -14,6 +14,7 @@ const {
   updateUserImage,
   updateUM,
   requestDeleteAccaunt,
+  confirmDeleteAccaunt,
 } = require("../controller/userController");
 const { isAuthenticated } = require("../middlware/isAuth");
 
@@ -33,5 +34,6 @@ router.put(
 );
 // delet accaunt user
 router.post("/request-delete-accaunt", isAuthenticated, requestDeleteAccaunt);
+router.post("/confirm-delete", isAuthenticated, confirmDeleteAccaunt);
 
 module.exports = router;

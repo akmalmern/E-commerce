@@ -15,8 +15,12 @@ const register = async (req, res, next) => {
     const { userName, email, phone, password, isAdmin } = req.body;
 
     // user tzimda bor yo'qligini tekshirish
-    const existUser = await User.findOne({ email });
-    if (existUser) {
+
+    const emailToCheck = email.trim();
+    const existingUser = await User.exists({
+      email: { $regex: `^${emailToCheck}$`, $options: "i" },
+    });
+    if (existingUser) {
       return next(new ErrorResponse("Bu email ro'yxatdan o'tgan", 400));
     }
 
@@ -437,6 +441,52 @@ const requestDeleteAccaunt = async (req, res, next) => {
   }
 };
 
+// delete codini tasdiqlash
+const confirmDeleteAccaunt = async (req, res, next) => {
+  try {
+    const { deleteCode } = req.body;
+    const userId = req.user._id;
+
+    if (!deleteCode) {
+      return next(new ErrorResponse("Tasdiqlash kodi kiritilmadi", 400));
+    }
+
+    // foydalanuvchi va codni tekshirish
+    const user = await User.findOne({
+      _id: userId,
+      deleteAccountToken: deleteCode,
+      deleteAccountTokenExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return next(
+        new ErrorResponse("Nato'g'ri yoki muddati o'tgan kod kiritdingiz")
+      );
+    }
+    // Agar foydalanuvchi rasm mavjud bo‘lsa, uni o‘chirish
+    if (user.image) {
+      const imagePath = path.join(__dirname, "../uploads", user.image);
+      try {
+        await fs.unlink(imagePath);
+      } catch (err) {
+        if (err.code !== "ENOENT") {
+          console.error("Rasmni o‘chirishda xato:", err.message);
+        }
+      }
+    }
+
+    // Foydalanuvchi hisobini o‘chirish
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      success: true,
+      message: "Foydalanuvchi hisobi muvaffaqiyatli o‘chirildi",
+    });
+  } catch (error) {
+    next(new ErrorResponse(error.message, 500));
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -448,4 +498,5 @@ module.exports = {
   updateUser,
   updateUserImage,
   requestDeleteAccaunt,
+  confirmDeleteAccaunt,
 };
