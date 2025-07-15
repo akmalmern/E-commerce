@@ -144,7 +144,7 @@ const updateProduct = async (req, res, next) => {
       return next(new ErrorResponse("Mahsulot topilmadi", 404));
     }
 
-    const { name, description, price, countInStock, category, brand, rating } =
+    const { name, description, price, countInStock, category, brand } =
       req.body;
 
     const updatedData = {
@@ -154,7 +154,6 @@ const updateProduct = async (req, res, next) => {
       countInStock: countInStock || existingProduct.countInStock,
       category: category || existingProduct.category,
       brand: brand || existingProduct.brand,
-      rating: rating || existingProduct.rating,
     };
 
     //  Rasmlar yangilangan bo‘lsa - eski rasmlarni o‘chirish

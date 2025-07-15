@@ -9,6 +9,8 @@ const userRouter = require("./routes/userRouter");
 const categoryRouter = require("./routes/categoryRouter");
 const productRouter = require("./routes/productRouter");
 const cartRouter = require("./routes/cartRouter");
+const orderRouter = require("./routes/orderRouter");
+const reivewRouter = require("./routes/reivewRouter");
 // ++++++++++++++++++++++++++++++
 app.use(express.json());
 dataDB();
@@ -20,6 +22,8 @@ app.use("/user", userRouter);
 app.use("/category", categoryRouter);
 app.use("/product", productRouter);
 app.use("/cart", cartRouter);
+app.use("/order", orderRouter);
+app.use("/review", reivewRouter);
 
 // ++++++++++++++++++++++++++++++
 app.use(errorHandler);

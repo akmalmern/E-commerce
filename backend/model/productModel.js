@@ -29,7 +29,6 @@ const productSchema = mongoose.Schema(
       required: [true, "Kamida 1 ta rasm yuklang!"],
     },
     brand: { type: String },
-    rating: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
